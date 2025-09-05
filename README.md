@@ -3,8 +3,6 @@ this was written by AI. the code and the readme file, i just had an idea and har
 
 **A 100% private, browser-based personal assistant to manage your finances, tasks, and daily life without ever needing an internet connection.**
 
-### [Live Demo Link (Deploy your own!)](#how-to-use)
-
 ## Overview
 
 Pocket Pal is a comprehensive Progressive Web App (PWA) designed for complete privacy and offline functionality. It's a full-featured tool that combines expense tracking, account management, debt logging (IOUs), and a simple to-do list in one place. All of your data is stored securely on your own device in the browser's IndexedDB, meaning you are in total control. Nothing is ever sent to a server.
