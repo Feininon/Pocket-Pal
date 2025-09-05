@@ -51,10 +51,11 @@ For testing on a laptop or desktop:
 1. Save the `daa11.html` file to your computer.
 2. Right-click the file and choose "Open with" your favorite browser (Chrome, Firefox, etc.).
 
-## 📂 File Structure
+## 📂 Very Complex File Structure
 
 The entire application is self-contained in `daa11.html`. This was a deliberate design choice to make the project maximally portable and easy to manage.
-'''txt
+```txt
 /
-└── index.html
-'''
+└── index.html 
+```
+the joke ofc written by me
