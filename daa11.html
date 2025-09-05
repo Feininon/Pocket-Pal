@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Pocket Pal</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json,{
+        &quot;name&quot;: &quot;Pocket Pal&quot;,
+        &quot;short_name&quot;: &quot;PocketPal&quot;,
+        &quot;start_url&quot;: &quot;.&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;#18181b&quot;,
+        &quot;theme_color&quot;: &quot;#18181b&quot;,
+        &quot;description&quot;: &quot;Your offline-first daily organizer for finances and tasks.&quot;,
+        &quot;icons&quot;: [
+            {
+                &quot;src&quot;: &quot;https://placehold.co/192x192/7c3aed/ffffff?text=PP&quot;,
+                &quot;sizes&quot;: &quot;192x192&quot;,
+                &quot;type&quot;: &quot;image/png&quot;
+            },
+            {
+                &quot;src&quot;: &quot;https://placehold.co/512x512/7c3aed/ffffff?text=PP&quot;,
+                &quot;sizes&quot;: &quot;512x512&quot;,
+                &quot;type&quot;: &quot;image/png&quot;
+            }
+        ]
+    }">
+    <meta name="theme-color" content="#18181b" id="theme-color-meta">
+
+    <style>
+        :root {
+            --bg-primary: #18181b; /* zinc-900 */
+            --bg-secondary: #27272a; /* zinc-800 */
+            --bg-tertiary: #3f3f46; /* zinc-700 */
+            --text-primary: #f4f4f5; /* zinc-100 */
+            --text-secondary: #a1a1aa; /* zinc-400 */
+            --text-muted: #71717a; /* zinc-500 */
+            --accent-color: #8b5cf6; /* violet-500 */
+            --accent-color-hover: #7c3aed; /* violet-600 */
+            --header-color: #a78bfa; /* violet-400 */
+        }
+
+        .theme-light { --bg-primary: #ffffff; --bg-secondary: #f1f5f9; --bg-tertiary: #e2e8f0; --text-primary: #1e293b; --text-secondary: #64748b; --text-muted: #94a3b8; }
+        .theme-ocean { --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155; --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b; --accent-color: #2563eb; --accent-color-hover: #1d4ed8; --header-color: #60a5fa; }
+        .theme-sakura { --bg-primary: #fff0f5; --bg-secondary: #ffe4e1; --bg-tertiary: #ffc0cb; --text-primary: #6a2e35; --text-secondary: #a36670; --text-muted: #b38898; --accent-color: #2e8b57; --accent-color-hover: #256d44; --header-color: #d87093; }
+        .theme-bubblegum { --bg-primary: #ffc0cb; --bg-secondary: #ffb6c1; --bg-tertiary: #ffcce7; --text-primary: #8a2be2; --text-secondary: #9370db; --text-muted: #9932cc; --accent-color: #4169e1; --accent-color-hover: #3557bd; --header-color: #ff69b4; }
+        .theme-pastel-dream { --bg-primary: #e6e6fa; --bg-secondary: #d8bfd8; --bg-tertiary: #b0e0e6; --text-primary: #483d8b; --text-secondary: #6a5acd; --text-muted: #836fff; --accent-color: #3cb371; --accent-color-hover: #32925d; --header-color: #ba55d3; }
+        .theme-rose-gold { --bg-primary: #fdf0e5; --bg-secondary: #e4c2b3; --bg-tertiary: #d2b48c; --text-primary: #5c3c2d; --text-secondary: #8c6653; --text-muted: #a4806a; --accent-color: #b87333; --accent-color-hover: #a0642b; --header-color: #c78f78; }
+        .theme-kawaii-pop { --bg-primary: #fffdde; --bg-secondary: #fffacd; --bg-tertiary: #f0e68c; --text-primary: #ff69b4; --text-secondary: #ffb6c1; --text-muted: #ffc0cb; --accent-color: #1e90ff; --accent-color-hover: #1872cc; --header-color: #ff6347; }
+        .theme-neon-noir { --bg-primary: #000000; --bg-secondary: #1a001a; --bg-tertiary: #330033; --text-primary: #00ff00; --text-secondary: #00e600; --text-muted: #00b300; --accent-color: #ff00ff; --accent-color-hover: #e600e6; --header-color: #00ffff; }
+        .theme-matrix { --bg-primary: #000000; --bg-secondary: #0d0d0d; --bg-tertiary: #1a1a1a; --text-primary: #00ff00; --text-secondary: #00cc00; --text-muted: #009900; --accent-color: #00ff00; --accent-color-hover: #00e600; --header-color: #00ff00; }
+        .theme-holo-interface { --bg-primary: #0c0c2a; --bg-secondary: #1c1c3a; --bg-tertiary: #2c2c4a; --text-primary: #e0e0ff; --text-secondary: #c0c0ff; --text-muted: #a0a0ff; --accent-color: #00ffff; --accent-color-hover: #00e6e6; --header-color: #00aaff; }
+        .theme-starship { --bg-primary: #e5e5e5; --bg-secondary: #d4d4d4; --bg-tertiary: #c2c2c2; --text-primary: #1c1c1c; --text-secondary: #4a4a4a; --text-muted: #6b6b6b; --accent-color: #ff4500; --accent-color-hover: #e63e00; --header-color: #005f73; }
+        .theme-synthwave { --bg-primary: #2c003e; --bg-secondary: #3c004e; --bg-tertiary: #4c005e; --text-primary: #00ffff; --text-secondary: #00e6e6; --text-muted: #00b3b3; --accent-color: #ff00ff; --accent-color-hover: #e600e6; --header-color: #ff8c00; }
+        .theme-8-bit { --bg-primary: #000000; --bg-secondary: #222222; --bg-tertiary: #444444; --text-primary: #ffffff; --text-secondary: #cccccc; --text-muted: #999999; --accent-color: #ff0000; --accent-color-hover: #cc0000; --header-color: #0000ff; }
+        .theme-paper { --bg-primary: #f5f5dc; --bg-secondary: #faf0e6; --bg-tertiary: #fdf5e6; --text-primary: #000000; --text-secondary: #2f4f4f; --text-muted: #696969; --accent-color: #0000cd; --accent-color-hover: #0000a7; --header-color: #8b0000; }
+        .theme-jungle { --bg-primary: #004d00; --bg-secondary: #006400; --bg-tertiary: #008000; --text-primary: #f0fff0; --text-secondary: #98fb98; --text-muted: #90ee90; --accent-color: #ffd700; --accent-color-hover: #e6c200; --header-color: #ff8c00; }
+        .theme-sunset { --bg-primary: #4c1d4e; --bg-secondary: #6a2c70; --bg-tertiary: #8b4513; --text-primary: #ffebcd; --text-secondary: #ffa07a; --text-muted: #ff7f50; --accent-color: #ff4500; --accent-color-hover: #e63e00; --header-color: #f08080; }
+        .theme-gothic { --bg-primary: #000000; --bg-secondary: #1c1c1c; --bg-tertiary: #2b2b2b; --text-primary: #ffffff; --text-secondary: #c0c0c0; --text-muted: #a9a9a9; --accent-color: #dc143c; --accent-color-hover: #b41030; --header-color: #8b0000; }
+        .theme-monokai { --bg-primary: #272822; --bg-secondary: #3e3d32; --bg-tertiary: #49483e; --text-primary: #f8f8f2; --text-secondary: #a6e22e; --text-muted: #75715e; --accent-color: #fd971f; --accent-color-hover: #e6881b; --header-color: #f92672; }
+        .theme-solarized-light { --bg-primary: #fdf6e3; --bg-secondary: #eee8d5; --bg-tertiary: #93a1a1; --text-primary: #657b83; --text-secondary: #586e75; --text-muted: #839496; --accent-color: #268bd2; --accent-color-hover: #2076b3; --header-color: #cb4b16; }
+        .theme-solarized-dark { --bg-primary: #002b36; --bg-secondary: #073642; --bg-tertiary: #586e75; --text-primary: #839496; --text-secondary: #93a1a1; --text-muted: #657b83; --accent-color: #268bd2; --accent-color-hover: #2076b3; --header-color: #b58900; }
+        .theme-dracula { --bg-primary: #282a36; --bg-secondary: #3b3d4f; --bg-tertiary: #44475a; --text-primary: #f8f8f2; --text-secondary: #bd93f9; --text-muted: #6272a4; --accent-color: #ff79c6; --accent-color-hover: #e66ebb; --header-color: #50fa7b; }
+        .theme-nord { --bg-primary: #2e3440; --bg-secondary: #3b4252; --bg-tertiary: #434c5e; --text-primary: #d8dee9; --text-secondary: #e5e9f0; --text-muted: #4c566a; --accent-color: #88c0d0; --accent-color-hover: #7ab1c2; --header-color: #5e81ac; }
+        .theme-gruvbox { --bg-primary: #282828; --bg-secondary: #3c3836; --bg-tertiary: #504945; --text-primary: #ebdbb2; --text-secondary: #d5c4a1; --text-muted: #a89984; --accent-color: #fabd2f; --accent-color-hover: #e1aa2a; --header-color: #fe8019; }
+        .theme-crimson-night { --bg-primary: #100000; --bg-secondary: #1a0000; --bg-tertiary: #240000; --text-primary: #f0d0d0; --text-secondary: #e0b0b0; --text-muted: #d09090; --accent-color: #dc143c; --accent-color-hover: #b41030; --header-color: #ff0000; }
+        .theme-emerald { --bg-primary: #00331e; --bg-secondary: #004d2c; --bg-tertiary: #00663a; --text-primary: #e6fff2; --text-secondary: #ccefe0; --text-muted: #b3dfcd; --accent-color: #ffd700; --accent-color-hover: #e6c200; --header-color: #50c878; }
+        .theme-amethyst { --bg-primary: #3c2a4d; --bg-secondary: #4d3663; --bg-tertiary: #5e4279; --text-primary: #f3e5f5; --text-secondary: #e1bee7; --text-muted: #ce93d8; --accent-color: #ab47bc; --accent-color-hover: #983fA9; --header-color: #ba68c8; }
+        .theme-coffee { --bg-primary: #3e2723; --bg-secondary: #4e342e; --bg-tertiary: #5d4037; --text-primary: #efebe9; --text-secondary: #d7ccc8; --text-muted: #bcaaa4; --accent-color: #ffab40; --accent-color-hover: #e69a3a; --header-color: #8d6e63; }
+        .theme-mint { --bg-primary: #f0fff0; --bg-secondary: #e0eee0; --bg-tertiary: #c1cdc1; --text-primary: #006400; --text-secondary: #2e8b57; --text-muted: #556b2f; --accent-color: #3cb371; --accent-color-hover: #32925d; --header-color: #20b2aa; }
+        .theme-mustard { --bg-primary: #3d3d3d; --bg-secondary: #4d4d4d; --bg-tertiary: #5d5d5d; --text-primary: #ffffff; --text-secondary: #e6e6e6; --text-muted: #cccccc; --accent-color: #ffdb58; --accent-color-hover: #e6c54f; --header-color: #ffd700; }
+        .theme-coral { --bg-primary: #f0f8ff; --bg-secondary: #e6f2ff; --bg-tertiary: #dcf1ff; --text-primary: #6a5acd; --text-secondary: #483d8b; --text-muted: #4b0082; --accent-color: #ff7f50; --accent-color-hover: #e67248; --header-color: #ff6347; }
+        /* New Movie Themes */
+        .theme-shire { --bg-primary: #f0ead6; --bg-secondary: #e6dfc6; --bg-tertiary: #d2c8a8; --text-primary: #3a2d0d; --text-secondary: #5c4916; --text-muted: #6b541a; --accent-color: #228B22; --accent-color-hover: #1c701c; --header-color: #b8860b; }
+        .theme-stark { --bg-primary: #222831; --bg-secondary: #393e46; --bg-tertiary: #4a5058; --text-primary: #eeeeee; --text-secondary: #bdbdbd; --text-muted: #9e9e9e; --accent-color: #d62828; --accent-color-hover: #b02020; --header-color: #fca311; }
+        .theme-xavier { --bg-primary: #003366; --bg-secondary: #004c99; --bg-tertiary: #005cb8; --text-primary: #ffffff; --text-secondary: #e0e0e0; --text-muted: #b0b0b0; --accent-color: #ffd700; --accent-color-hover: #e6c200; --header-color: #ff3d00; }
+        .theme-oasis { --bg-primary: #0a0a0a; --bg-secondary: #1a1a1a; --bg-tertiary: #2a2a2a; --text-primary: #e0e0e0; --text-secondary: #b0b0b0; --text-muted: #8a8a8a; --accent-color: #00f6ff; --accent-color-hover: #00d1d8; --header-color: #ff00c1; }
+        .theme-sith { --bg-primary: #121212; --bg-secondary: #282828; --bg-tertiary: #3c3c3c; --text-primary: #e0e0e0; --text-secondary: #b0bec5; --text-muted: #90a4ae; --accent-color: #e53935; --accent-color-hover: #c62828; --header-color: #cfd8dc; }
+        .theme-autobot { --bg-primary: #37474f; --bg-secondary: #455a64; --bg-tertiary: #546e7a; --text-primary: #eceff1; --text-secondary: #cfd8dc; --text-muted: #b0bec5; --accent-color: #d32f2f; --accent-color-hover: #c62828; --header-color: #1976d2; }
+        /* New Game Themes */
+        .theme-hellfire { --bg-primary: #1a0b08; --bg-secondary: #3e1b15; --bg-tertiary: #5a2a22; --text-primary: #f5e6e3; --text-secondary: #e6cdc7; --text-muted: #d8b4ab; --accent-color: #ff4500; --accent-color-hover: #e63e00; --header-color: #e62e00; }
+        .theme-night-city { --bg-primary: #0a0a0a; --bg-secondary: #1a1a1a; --bg-tertiary: #2b2b2b; --text-primary: #fdfd00; --text-secondary: #eaea00; --text-muted: #d1d100; --accent-color: #f90059; --accent-color-hover: #d3004c; --header-color: #00f0ff; }
+        .theme-los-santos { --bg-primary: #e0f7fa; --bg-secondary: #b2ebf2; --bg-tertiary: #80deea; --text-primary: #006064; --text-secondary: #00838f; --text-muted: #0097a7; --accent-color: #ff9800; --accent-color-hover: #f57c00; --header-color: #f50057; }
+        .theme-outlaw { --bg-primary: #fdf6e3; --bg-secondary: #eee8d5; --bg-tertiary: #d8cca3; --text-primary: #583922; --text-secondary: #6d4c41; --text-muted: #8d6e63; --accent-color: #a52a2a; --accent-color-hover: #8e2424; --header-color: #8b4513; }
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        /* Apply theme colors to components */
+        .bg-app-primary { background-color: var(--bg-primary); }
+        .bg-app-secondary { background-color: var(--bg-secondary); }
+        .bg-app-tertiary { background-color: var(--bg-tertiary); }
+        .text-app-primary { color: var(--text-primary); }
+        .text-app-secondary { color: var(--text-secondary); }
+        .text-app-muted { color: var(--text-muted); }
+        .text-app-header { color: var(--header-color); }
+        .accent-bg { background-color: var(--accent-color); }
+        .accent-bg-hover:hover { background-color: var(--accent-color-hover); }
+        .accent-text { color: var(--accent-color); }
+        .accent-ring:focus {color: var(--accent-color); }
+        .nav-button.active { color: var(--accent-color); }
+
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .page { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-app-primary text-app-primary">
+
+    <!-- App Container -->
+    <div class="max-w-md mx-auto h-screen flex flex-col relative overflow-hidden">
+        
+        <!-- App Header -->
+        <header class="bg-app-primary z-10">
+            <div class="px-4 py-4">
+                <h1 id="header-title" class="text-2xl font-bold text-center text-app-header">Home</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto no-scrollbar pb-24">
+            <div class="px-4">
+                
+                <!-- Home Page -->
+                <div id="home-page" class="page">
+                    <div class="space-y-6">
+                        <!-- Net Worth Summary -->
+                        <div class="bg-app-secondary p-4 rounded-lg text-center">
+                            <p class="text-sm text-app-secondary">Total Net Worth</p>
+                            <p id="net-worth" class="text-3xl font-bold">$0.00</p>
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="add-expense-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+                                <i data-lucide="arrow-down-circle" class="w-5 h-5"></i><span>Expense</span>
+                            </button>
+                            <button id="add-income-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+                                <i data-lucide="arrow-up-circle" class="w-5 h-5"></i><span>Income</span>
+                            </button>
+                        </div>
+                        <!-- Accounts List -->
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Accounts</h2>
+                            <ul id="accounts-list" class="space-y-2">
+                               <li class="text-center text-app-muted py-4">No accounts found. Add one in Settings!</li>
+                            </ul>
+                        </div>
+                        <!-- Recent Transactions -->
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Recent Transactions</h2>
+                            <ul id="transactions-list" class="space-y-2">
+                               <li class="text-center text-app-muted py-4">No transactions yet.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks Page -->
+                <div id="tasks-page" class="page hidden">
+                     <div class="space-y-4">
+                        <form id="add-task-form" class="flex gap-2">
+                            <input id="task-input" type="text" placeholder="Add a new task..." class="flex-1 bg-app-secondary border border-app-tertiary rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+                            <button type="submit" class="accent-bg accent-bg-hover text-white font-bold p-3 rounded-lg transition-transform duration-200 active:scale-95">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
+                        </form>
+                        <div id="tasks-container">
+                            <h3 class="text-lg font-semibold text-app-secondary mb-2">To-Do</h3>
+                            <ul id="todo-list" class="space-y-2">
+                                 <li class="text-center text-app-muted py-4">No tasks here. Add one!</li>
+                            </ul>
+                            <h3 class="text-lg font-semibold text-app-secondary mt-6 mb-2">Completed</h3>
+                            <ul id="completed-list" class="space-y-2">
+                               <li class="text-center text-app-muted py-4">No completed tasks yet.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IOUs Page -->
+                <div id="ious-page" class="page hidden">
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="add-lent-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+                                <i data-lucide="user-plus" class="w-5 h-5"></i><span>I Lent</span>
+                            </button>
+                            <button id="add-owed-btn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+                                <i data-lucide="user-minus" class="w-5 h-5"></i><span>I Owe</span>
+                            </button>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Money Lent (They Owe You)</h2>
+                            <ul id="lent-list" class="space-y-2"></ul>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Money Owed (You Owe Them)</h2>
+                            <ul id="owed-list" class="space-y-2"></ul>
+                        </div>
+                         <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Settled</h2>
+                            <ul id="settled-ious-list" class="space-y-2"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="reports-page" class="page hidden">
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center bg-app-secondary p-2 rounded-lg">
+                            <button id="prev-month-btn" class="p-2 hover:bg-app-tertiary rounded-md"><i data-lucide="chevron-left"></i></button>
+                            <h2 id="report-month" class="text-lg font-bold"></h2>
+                            <button id="next-month-btn" class="p-2 hover:bg-app-tertiary rounded-md"><i data-lucide="chevron-right"></i></button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-app-secondary p-3 rounded-lg">
+                                <p class="text-sm text-green-400">Income</p>
+                                <p id="report-income" class="text-xl font-bold">$0.00</p>
+                            </div>
+                            <div class="bg-app-secondary p-3 rounded-lg">
+                                <p class="text-sm text-red-400">Expenses</p>
+                                <p id="report-expenses" class="text-xl font-bold">$0.00</p>
+                            </div>
+                            <div class="bg-app-secondary p-3 rounded-lg">
+                                <p class="text-sm accent-text">Net</p>
+                                <p id="report-net" class="text-xl font-bold">$0.00</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-app-secondary mb-3">Spending by Category</h3>
+                            <div id="report-categories" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settings-page" class="page hidden">
+                     <div class="space-y-8">
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Appearance</h2>
+                             <div id="theme-container" class="space-y-4">
+                                <!-- Themes are dynamically generated here -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Manage Accounts</h2>
+                            <div id="manage-accounts-list" class="space-y-2"></div>
+                             <button id="add-account-btn" class="mt-3 w-full bg-app-tertiary hover:bg-zinc-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+                                <i data-lucide="plus" class="w-5 h-5"></i><span>Add New Account</span>
+                            </button>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-app-secondary mb-3">Data Management</h2>
+                            <button id="export-data-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95">
+                                <i data-lucide="download" class="w-5 h-5"></i><span>Export All Data</span>
+                            </button>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Bottom Navigation -->
+        <footer class="bg-app-secondary absolute bottom-0 left-0 right-0 z-30">
+            <nav class="grid grid-cols-5 text-center text-app-secondary">
+                <button data-page="home-page" class="nav-button active p-4 transition-colors duration-200">
+                    <i data-lucide="home" class="mx-auto w-6 h-6"></i><span class="text-xs">Home</span>
+                </button>
+                <button data-page="tasks-page" class="nav-button p-4 transition-colors duration-200">
+                    <i data-lucide="check-square" class="mx-auto w-6 h-6"></i><span class="text-xs">Tasks</span>
+                </button>
+                <button data-page="ious-page" class="nav-button p-4 transition-colors duration-200">
+                    <i data-lucide="users" class="mx-auto w-6 h-6"></i><span class="text-xs">IOUs</span>
+                </button>
+                <button data-page="reports-page" class="nav-button p-4 transition-colors duration-200">
+                    <i data-lucide="bar-chart-2" class="mx-auto w-6 h-6"></i><span class="text-xs">Reports</span>
+                </button>
+                <button data-page="settings-page" class="nav-button p-4 transition-colors duration-200">
+                    <i data-lucide="settings" class="mx-auto w-6 h-6"></i><span class="text-xs">Settings</span>
+                </button>
+            </nav>
+        </footer>
+    </div>
+
+
+    <!-- Modals -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black/70 z-40 hidden"></div>
+
+    <!-- Transaction Modal -->
+    <div id="transaction-modal" class="fixed bottom-0 left-0 right-0 bg-app-secondary rounded-t-2xl p-6 z-50 transform translate-y-full transition-transform duration-300">
+        <h2 id="transaction-modal-title" class="text-xl font-bold mb-4">Log Transaction</h2>
+        <form id="transaction-form">
+            <input type="hidden" id="transaction-type" value="expense">
+            <div class="mb-4">
+                <label for="transaction-name" class="block text-sm font-medium text-app-secondary mb-1">Name</label>
+                <input type="text" id="transaction-name" required class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+            </div>
+             <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="transaction-amount" class="block text-sm font-medium text-app-secondary mb-1">Amount</label>
+                    <input type="number" id="transaction-amount" step="0.01" required placeholder="0.00" class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+                </div>
+                <div>
+                     <label for="transaction-category" class="block text-sm font-medium text-app-secondary mb-1">Category</label>
+                    <select id="transaction-category" required class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring h-[42px]"></select>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="transaction-account" class="block text-sm font-medium text-app-secondary mb-1">Account</label>
+                <select id="transaction-account" required class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring"></select>
+            </div>
+            <div class="mb-4">
+                <label for="transaction-datetime" class="block text-sm font-medium text-app-secondary mb-1">Date & Time</label>
+                <input type="datetime-local" id="transaction-datetime" required class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+            </div>
+            <div class="mb-6">
+                <label for="transaction-notes" class="block text-sm font-medium text-app-secondary mb-1">Notes (Optional)</label>
+                <textarea id="transaction-notes" rows="2" class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring"></textarea>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="cancel-btn w-full bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-3 rounded-lg transition-transform duration-200 active:scale-95">Cancel</button>
+                <button type="submit" class="w-full accent-bg accent-bg-hover text-white font-bold py-3 rounded-lg transition-transform duration-200 active:scale-95">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Account Modal -->
+    <div id="account-modal" class="fixed bottom-0 left-0 right-0 bg-app-secondary rounded-t-2xl p-6 z-50 transform translate-y-full transition-transform duration-300">
+        <h2 id="account-modal-title" class="text-xl font-bold mb-4">Add Account</h2>
+        <form id="account-form">
+            <input type="hidden" id="account-id">
+            <div class="mb-4">
+                <label for="account-name" class="block text-sm font-medium text-app-secondary mb-1">Account Name (e.g., Cash)</label>
+                <input type="text" id="account-name" required class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+            </div>
+            <div class="mb-6">
+                <label for="account-balance" class="block text-sm font-medium text-app-secondary mb-1">Current Balance</label>
+                <input type="number" id="account-balance" step="0.01" required placeholder="0.00" class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="cancel-btn w-full bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-3 rounded-lg transition-transform duration-200 active:scale-95">Cancel</button>
+                <button type="submit" class="w-full accent-bg accent-bg-hover text-white font-bold py-3 rounded-lg transition-transform duration-200 active:scale-95">Save Account</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- IOU Modal -->
+    <div id="iou-modal" class="fixed bottom-0 left-0 right-0 bg-app-secondary rounded-t-2xl p-6 z-50 transform translate-y-full transition-transform duration-300">
+        <h2 id="iou-modal-title" class="text-xl font-bold mb-4">Log IOU</h2>
+        <form id="iou-form">
+            <input type="hidden" id="iou-type">
+            <div class="mb-4">
+                <label for="iou-person" class="block text-sm font-medium text-app-secondary mb-1">Person's Name</label>
+                <input type="text" id="iou-person" required class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+            </div>
+            <div class="mb-4">
+                <label for="iou-amount" class="block text-sm font-medium text-app-secondary mb-1">Amount</label>
+                <input type="number" id="iou-amount" step="0.01" required placeholder="0.00" class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring">
+            </div>
+            <div id="iou-account-wrapper" class="mb-4">
+                <label for="iou-account" class="block text-sm font-medium text-app-secondary mb-1">From Account</label>
+                <select id="iou-account" class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring"></select>
+            </div>
+            <div class="mb-6">
+                <label for="iou-notes" class="block text-sm font-medium text-app-secondary mb-1">Notes (Optional)</label>
+                <textarea id="iou-notes" rows="2" class="w-full bg-app-tertiary border border-zinc-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 accent-ring"></textarea>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="cancel-btn w-full bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-3 rounded-lg transition-transform duration-200 active:scale-95">Cancel</button>
+                <button type="submit" class="w-full accent-bg accent-bg-hover text-white font-bold py-3 rounded-lg transition-transform duration-200 active:scale-95">Save IOU</button>
+            </div>
+        </form>
+    </div>
+    
+    <script type="module">
+        let db;
+        let currentReportDate = new Date();
+        const CATEGORIES = ["Groceries", "Transport", "Entertainment", "Utilities", "Food", "Shopping", "Other"];
+        const THEMES = [
+            // Original
+            { category: "Originals", id: 'theme-dark', name: 'Dark', colors: { primary: '#18181b', secondary: '#27272a', accent: '#8b5cf6'} },
+            { category: "Originals", id: 'theme-light', name: 'Light', colors: { primary: '#ffffff', secondary: '#f1f5f9', accent: '#8b5cf6'} },
+            { category: "Originals", id: 'theme-ocean', name: 'Ocean', colors: { primary: '#0f172a', secondary: '#1e293b', accent: '#2563eb'} },
+            // Movies
+            { category: "Movies", id: 'theme-shire', name: 'Shire', colors: { primary: '#f0ead6', secondary: '#e6dfc6', accent: '#228B22'} },
+            { category: "Movies", id: 'theme-stark', name: 'Stark', colors: { primary: '#222831', secondary: '#393e46', accent: '#d62828'} },
+            { category: "Movies", id: 'theme-xavier', name: 'Xavier', colors: { primary: '#003366', secondary: '#004c99', accent: '#ffd700'} },
+            { category: "Movies", id: 'theme-oasis', name: 'OASIS', colors: { primary: '#0a0a0a', secondary: '#1a1a1a', accent: '#00f6ff'} },
+            { category: "Movies", id: 'theme-sith', name: 'Sith', colors: { primary: '#121212', secondary: '#282828', accent: '#e53935'} },
+            { category: "Movies", id: 'theme-autobot', name: 'Autobot', colors: { primary: '#37474f', secondary: '#455a64', accent: '#d32f2f'} },
+            // Games
+            { category: "Games", id: 'theme-hellfire', name: 'Hellfire', colors: { primary: '#1a0b08', secondary: '#3e1b15', accent: '#ff4500'} },
+            { category: "Games", id: 'theme-night-city', name: 'Night City', colors: { primary: '#0a0a0a', secondary: '#1a1a1a', accent: '#f90059'} },
+            { category: "Games", id: 'theme-los-santos', name: 'Los Santos', colors: { primary: '#e0f7fa', secondary: '#b2ebf2', accent: '#ff9800'} },
+            { category: "Games", id: 'theme-outlaw', name: 'Outlaw', colors: { primary: '#fdf6e3', secondary: '#eee8d5', accent: '#a52a2a'} },
+            { category: "Games", id: 'theme-matrix', name: 'Matrix', colors: { primary: '#000000', secondary: '#0d0d0d', accent: '#00ff00'} },
+            // Pinky & Pastel
+            { category: "Pastels", id: 'theme-sakura', name: 'Sakura', colors: { primary: '#fff0f5', secondary: '#ffe4e1', accent: '#2e8b57'} },
+            { category: "Pastels", id: 'theme-bubblegum', name: 'Bubblegum', colors: { primary: '#ffc0cb', secondary: '#ffb6c1', accent: '#4169e1'} },
+            { category: "Pastels", id: 'theme-pastel-dream', name: 'Pastel', colors: { primary: '#e6e6fa', secondary: '#d8bfd8', accent: '#3cb371'} },
+            { category: "Pastels", id: 'theme-rose-gold', name: 'Rose Gold', colors: { primary: '#fdf0e5', secondary: '#e4c2b3', accent: '#b87333'} },
+            { category: "Pastels", id: 'theme-kawaii-pop', name: 'Kawaii Pop', colors: { primary: '#fffdde', secondary: '#fffacd', accent: '#1e90ff'} },
+            // Stylistic & Futurist
+            { category: "Stylistic", id: 'theme-neon-noir', name: 'Neon Noir', colors: { primary: '#000000', secondary: '#1a001a', accent: '#ff00ff'} },
+            { category: "Stylistic", id: 'theme-holo-interface', name: 'Holo', colors: { primary: '#0c0c2a', secondary: '#1c1c3a', accent: '#00ffff'} },
+            { category: "Stylistic", id: 'theme-starship', name: 'Starship', colors: { primary: '#e5e5e5', secondary: '#d4d4d4', accent: '#ff4500'} },
+            { category: "Stylistic", id: 'theme-synthwave', name: 'Synthwave', colors: { primary: '#2c003e', secondary: '#3c004e', accent: '#ff00ff'} },
+            { category: "Stylistic", id: 'theme-8-bit', name: '8-Bit', colors: { primary: '#000000', secondary: '#222222', accent: '#ff0000'} },
+            { category: "Stylistic", id: 'theme-paper', name: 'Paper', colors: { primary: '#f5f5dc', secondary: '#faf0e6', accent: '#0000cd'} },
+            { category: "Stylistic", id: 'theme-jungle', name: 'Jungle', colors: { primary: '#004d00', secondary: '#006400', accent: '#ffd700'} },
+            { category: "Stylistic", id: 'theme-sunset', name: 'Sunset', colors: { primary: '#4c1d4e', secondary: '#6a2c70', accent: '#ff4500'} },
+            { category: "Stylistic", id: 'theme-gothic', name: 'Gothic', colors: { primary: '#000000', secondary: '#1c1c1c', accent: '#dc143c'} },
+            // Code Editors
+            { category: "Dev", id: 'theme-monokai', name: 'Monokai', colors: { primary: '#272822', secondary: '#3e3d32', accent: '#fd971f'} },
+            { category: "Dev", id: 'theme-solarized-light', name: 'Solar Light', colors: { primary: '#fdf6e3', secondary: '#eee8d5', accent: '#268bd2'} },
+            { category: "Dev", id: 'theme-solarized-dark', name: 'Solar Dark', colors: { primary: '#002b36', secondary: '#073642', accent: '#268bd2'} },
+            { category: "Dev", id: 'theme-dracula', name: 'Dracula', colors: { primary: '#282a36', secondary: '#3b3d4f', accent: '#ff79c6'} },
+            { category: "Dev", id: 'theme-nord', name: 'Nord', colors: { primary: '#2e3440', secondary: '#3b4252', accent: '#88c0d0'} },
+            { category: "Dev", id: 'theme-gruvbox', name: 'Gruvbox', colors: { primary: '#282828', secondary: '#3c3836', accent: '#fabd2f'} },
+            // Simple Colors
+            { category: "Colors", id: 'theme-crimson-night', name: 'Crimson', colors: { primary: '#100000', secondary: '#1a0000', accent: '#dc143c'} },
+            { category: "Colors", id: 'theme-emerald', name: 'Emerald', colors: { primary: '#00331e', secondary: '#004d2c', accent: '#ffd700'} },
+            { category: "Colors", id: 'theme-amethyst', name: 'Amethyst', colors: { primary: '#3c2a4d', secondary: '#4d3663', accent: '#ab47bc'} },
+            { category: "Colors", id: 'theme-coffee', name: 'Coffee', colors: { primary: '#3e2723', secondary: '#4e342e', accent: '#ffab40'} },
+            { category: "Colors", id: 'theme-mint', name: 'Mint', colors: { primary: '#f0fff0', secondary: '#e0eee0', accent: '#3cb371'} },
+            { category: "Colors", id: 'theme-mustard', name: 'Mustard', colors: { primary: '#3d3d3d', secondary: '#4d4d4d', accent: '#ffdb58'} },
+            { category: "Colors", id: 'theme-coral', name: 'Coral', colors: { primary: '#f0f8ff', secondary: '#e6f2ff', accent: '#ff7f50'} },
+        ];
+
+
+        // --- DATABASE HELPERS ---
+        function setupDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('pocketPalDB_v6', 1);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('accounts')) {
+                        db.createObjectStore('accounts', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains('transactions')) {
+                        const transactionStore = db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true });
+                        transactionStore.createIndex('accountId', 'accountId', { unique: false });
+                        transactionStore.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                    if (!db.objectStoreNames.contains('tasks')) {
+                        db.createObjectStore('tasks', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains('ious')) {
+                        db.createObjectStore('ious', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains('settings')) {
+                        db.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log('Database opened successfully');
+                    resolve(db);
+                };
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        const dbAction = (storeName, mode, action, data, key) => new Promise((resolve, reject) => {
+            const transaction = db.transaction([storeName], mode);
+            const store = transaction.objectStore(storeName);
+            const request = key ? store[action](data, key) : store[action](data);
+            transaction.oncomplete = () => resolve(request.result);
+            transaction.onerror = (e) => reject(e.target.error);
+            request.onsuccess = () => {}; 
+        });
+
+        const dbAdd = (storeName, item) => dbAction(storeName, 'readwrite', 'add', item);
+        const dbGet = (storeName, id) => dbAction(storeName, 'readonly', 'get', id);
+        const dbGetAll = (storeName, indexName, query) => new Promise((resolve, reject) => {
+            const transaction = db.transaction([storeName], 'readonly');
+            const store = transaction.objectStore(storeName);
+            const index = indexName ? store.index(indexName) : store;
+            const request = index.getAll(query);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = (e) => reject(e.target.error);
+        });
+        const dbUpdate = (storeName, item) => dbAction(storeName, 'readwrite', 'put', item);
+        const dbDelete = (storeName, id) => dbAction(storeName, 'readwrite', 'delete', id);
+        const dbUpsert = (storeName, item, key) => dbAction(storeName, 'readwrite', 'put', item, key);
+
+
+        // --- THEME MANAGEMENT ---
+        async function applyTheme(themeId) {
+            const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
+            document.body.className = `bg-app-primary text-app-primary ${theme.id}`;
+            document.getElementById('theme-color-meta').setAttribute('content', theme.colors.primary);
+            
+            // Update active button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                const btnTheme = THEMES.find(t => t.id === btn.dataset.theme);
+                if (btn.dataset.theme === themeId) {
+                     btn.style.borderColor = btnTheme.colors.accent;
+                } else {
+                     btn.style.borderColor = 'transparent';
+                }
+            });
+        }
+
+        async function saveTheme(themeId) {
+            await dbUpsert('settings', { key: 'theme', value: themeId }, 'theme');
+        }
+
+        async function loadTheme() {
+            const themeSetting = await dbGet('settings', 'theme');
+            const themeId = themeSetting ? themeSetting.value : 'theme-dark';
+            applyTheme(themeId);
+        }
+
+        function renderThemeSelector() {
+            const container = document.getElementById('theme-container');
+            container.innerHTML = '';
+
+            const groupedThemes = THEMES.reduce((acc, theme) => {
+                (acc[theme.category] = acc[theme.category] || []).push(theme);
+                return acc;
+            }, {});
+
+            for (const category in groupedThemes) {
+                const categoryWrapper = document.createElement('div');
+                
+                const title = document.createElement('h3');
+                title.className = 'text-md font-semibold text-app-secondary mb-2';
+                title.textContent = category;
+                categoryWrapper.appendChild(title);
+
+                const scroller = document.createElement('div');
+                scroller.className = 'flex overflow-x-auto gap-3 pb-3 no-scrollbar';
+
+                groupedThemes[category].forEach(theme => {
+                    const button = document.createElement('button');
+                    button.dataset.theme = theme.id;
+                    button.className = 'theme-btn border-2 rounded-lg p-2 text-center flex-shrink-0 w-24';
+                    button.innerHTML = `
+                        <div class="w-full h-10 rounded mb-2" style="background-color: ${theme.colors.secondary}"></div>
+                        <p class="text-xs text-app-secondary">${theme.name}</p>
+                    `;
+                    button.addEventListener('click', (e) => {
+                        const themeId = e.currentTarget.dataset.theme;
+                        applyTheme(themeId);
+                        saveTheme(themeId);
+                    });
+                    scroller.appendChild(button);
+                });
+                categoryWrapper.appendChild(scroller);
+                container.appendChild(categoryWrapper);
+            }
+        }
+
+
+        // --- UI RENDERING ---
+        async function renderAll() {
+            await Promise.all([
+                renderAccounts(),
+                renderTransactions(),
+                renderTasks(),
+                renderManageAccounts(),
+                renderIOUs(),
+                renderReports(currentReportDate)
+            ]);
+            lucide.createIcons();
+        }
+
+        async function renderAccounts() {
+            const accounts = await dbGetAll('accounts');
+            const list = document.getElementById('accounts-list');
+            let netWorth = 0;
+            list.innerHTML = '';
+
+            if (accounts.length === 0) {
+                 list.innerHTML = `<li class="text-center text-app-muted py-4">No accounts. Add one in Settings.</li>`;
+            } else {
+                accounts.forEach(acc => {
+                    netWorth += acc.balance;
+                    const li = document.createElement('li');
+                    li.className = 'bg-app-secondary p-3 rounded-lg flex justify-between items-center';
+                    li.innerHTML = `
+                        <span class="font-semibold">${acc.name}</span>
+                        <span class="font-bold text-lg">$${acc.balance.toFixed(2)}</span>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+            document.getElementById('net-worth').textContent = `$${netWorth.toFixed(2)}`;
+        }
+
+        async function renderTransactions() {
+            const transactions = await dbGetAll('transactions');
+            const accounts = await dbGetAll('accounts');
+            const accountsMap = new Map(accounts.map(acc => [acc.id, acc.name]));
+            const list = document.getElementById('transactions-list');
+            list.innerHTML = '';
+
+            if (transactions.length === 0) {
+                 list.innerHTML = `<li class="text-center text-app-muted py-4">No transactions yet.</li>`;
+                 return;
+            }
+
+            transactions.sort((a, b) => b.timestamp - a.timestamp).slice(0, 10).forEach(t => {
+                const li = document.createElement('li');
+                li.className = 'bg-app-secondary p-3 rounded-lg flex justify-between items-center';
+                const isExpense = t.type === 'expense';
+                const transactionDate = new Date(t.timestamp);
+                const formattedDate = transactionDate.toLocaleString('default', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+
+                li.innerHTML = `
+                    <div>
+                        <span class="font-semibold">${t.name}</span>
+                        <p class="text-xs text-app-secondary">${t.category ? t.category + ' | ' : ''}${accountsMap.get(t.accountId) || 'Unknown'}</p>
+                        <p class="text-xs text-app-muted mt-1">${formattedDate}</p>
+                    </div>
+                    <span class="font-bold ${isExpense ? 'text-red-400' : 'text-green-400'}">
+                        ${isExpense ? '-' : '+'}$${t.amount.toFixed(2)}
+                    </span>
+                `;
+                list.appendChild(li);
+            });
+        }
+        
+        async function renderManageAccounts() {
+            const accounts = await dbGetAll('accounts');
+            const list = document.getElementById('manage-accounts-list');
+            list.innerHTML = '';
+             if (accounts.length === 0) {
+                 list.innerHTML = `<p class="text-app-muted text-center py-4">No accounts defined.</p>`;
+                 return;
+            }
+            accounts.forEach(acc => {
+                const div = document.createElement('div');
+                div.className = 'bg-app-secondary p-3 rounded-lg flex justify-between items-center';
+                div.innerHTML = `
+                    <div>
+                        <span class="font-semibold">${acc.name}</span>
+                        <p class="text-xs text-app-secondary">Balance: $${acc.balance.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <button class="edit-account-btn p-2 text-app-secondary hover:accent-text" data-id="${acc.id}"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                        <button class="delete-account-btn p-2 text-app-secondary hover:text-red-400" data-id="${acc.id}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+            
+            document.querySelectorAll('.edit-account-btn').forEach(btn => btn.addEventListener('click', handleEditAccount));
+            document.querySelectorAll('.delete-account-btn').forEach(btn => btn.addEventListener('click', handleDeleteAccount));
+        }
+
+        async function renderTasks() {
+            const tasks = await dbGetAll('tasks');
+            const todoList = document.getElementById('todo-list');
+            const completedList = document.getElementById('completed-list');
+            todoList.innerHTML = '';
+            completedList.innerHTML = '';
+            
+            const todoTasks = tasks.filter(t => !t.completed);
+            const completedTasks = tasks.filter(t => t.completed);
+
+            if (todoTasks.length === 0) {
+                todoList.innerHTML = `<li class="text-center text-app-muted py-4">No tasks here.</li>`;
+            } else {
+                todoTasks.sort((a,b) => a.createdAt - b.createdAt).forEach(task => todoList.appendChild(createTaskElement(task)));
+            }
+           
+            if (completedTasks.length === 0) {
+                completedList.innerHTML = `<li class="text-center text-app-muted py-4">No completed tasks.</li>`;
+            } else {
+                completedTasks.sort((a,b) => b.createdAt - a.createdAt).forEach(task => completedList.appendChild(createTaskElement(task)));
+            }
+        }
+
+        function createTaskElement(task) {
+            const li = document.createElement('li');
+            li.className = 'bg-app-secondary p-3 rounded-lg flex items-center gap-3';
+            li.dataset.taskId = task.id;
+            li.innerHTML = `
+                <input type="checkbox" ${task.completed ? 'checked' : ''} class="task-checkbox h-6 w-6 bg-app-tertiary border-zinc-600 accent-text rounded focus:ring-violet-500">
+                <span class="flex-1 ${task.completed ? 'line-through text-app-muted' : ''}">${task.text}</span>
+                 <button class="delete-task-btn text-app-muted hover:text-red-500">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </button>
+            `;
+            li.querySelector('.task-checkbox').addEventListener('change', handleTaskCheck);
+            li.querySelector('.delete-task-btn').addEventListener('click', handleTaskDelete);
+            return li;
+        }
+
+        async function renderIOUs() {
+            const ious = await dbGetAll('ious');
+            const lentList = document.getElementById('lent-list');
+            const owedList = document.getElementById('owed-list');
+            const settledList = document.getElementById('settled-ious-list');
+            lentList.innerHTML = '';
+            owedList.innerHTML = '';
+            settledList.innerHTML = '';
+
+            const activeLent = ious.filter(i => i.type === 'lent' && !i.settled);
+            const activeOwed = ious.filter(i => i.type === 'owed' && !i.settled);
+            const settledIOUs = ious.filter(i => i.settled);
+
+            if (activeLent.length === 0) lentList.innerHTML = `<li class="text-center text-app-muted py-2 text-sm">Nothing lent out.</li>`;
+            else activeLent.forEach(iou => lentList.appendChild(createIOUElement(iou)));
+            
+            if (activeOwed.length === 0) owedList.innerHTML = `<li class="text-center text-app-muted py-2 text-sm">You don't owe anyone.</li>`;
+            else activeOwed.forEach(iou => owedList.appendChild(createIOUElement(iou)));
+
+            if (settledIOUs.length === 0) settledList.innerHTML = `<li class="text-center text-app-muted py-2 text-sm">No settled debts.</li>`;
+            else settledIOUs.forEach(iou => settledList.appendChild(createIOUElement(iou)));
+        }
+
+        function createIOUElement(iou) {
+            const li = document.createElement('li');
+            li.className = `p-3 rounded-lg flex justify-between items-center ${iou.settled ? 'bg-app-secondary/50' : 'bg-app-secondary'}`;
+            li.innerHTML = `
+                <div>
+                    <p class="font-bold ${iou.settled ? 'text-app-muted line-through' : ''}">${iou.person}</p>
+                    <p class="text-xs text-app-secondary">${iou.notes || 'No notes'}</p>
+                </div>
+                <div class="text-right">
+                     <p class="font-bold ${iou.settled ? 'text-app-muted line-through' : (iou.type === 'lent' ? 'text-blue-400' : 'text-orange-400')}">$${iou.amount.toFixed(2)}</p>
+                    ${!iou.settled ? `<button class="settle-iou-btn text-xs bg-green-600 text-white px-2 py-1 rounded-md mt-1" data-id="${iou.id}">Settle</button>` : `<p class="text-xs text-app-muted">Settled</p>`}
+                </div>
+            `;
+            if (!iou.settled) {
+                li.querySelector('.settle-iou-btn').addEventListener('click', handleSettleIOU);
+            }
+            return li;
+        }
+
+        async function renderReports(date) {
+            const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+            const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+            document.getElementById('report-month').textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const range = IDBKeyRange.bound(monthStart.getTime(), monthEnd.getTime());
+            const allTransactions = await dbGetAll('transactions', 'timestamp', range);
+            
+            let totalIncome = 0;
+            let totalExpenses = 0;
+            const categorySpending = {};
+
+            allTransactions.forEach(t => {
+                if(t.type === 'income') {
+                    totalIncome += t.amount;
+                } else if (t.type === 'expense') {
+                    totalExpenses += t.amount;
+                    categorySpending[t.category] = (categorySpending[t.category] || 0) + t.amount;
+                }
+            });
+
+            document.getElementById('report-income').textContent = `$${totalIncome.toFixed(2)}`;
+            document.getElementById('report-expenses').textContent = `$${totalExpenses.toFixed(2)}`;
+            const net = totalIncome - totalExpenses;
+            const netEl = document.getElementById('report-net');
+            netEl.textContent = `$${net.toFixed(2)}`;
+            netEl.className = `text-xl font-bold ${net >= 0 ? 'text-green-400' : 'text-red-400'}`;
+            
+            const categoriesEl = document.getElementById('report-categories');
+            categoriesEl.innerHTML = '';
+            const sortedCategories = Object.entries(categorySpending).sort(([,a],[,b]) => b-a);
+            
+            if (sortedCategories.length === 0) {
+                 categoriesEl.innerHTML = `<div class="text-center text-app-muted py-4">No expenses for this month.</div>`;
+                 return;
+            }
+
+            sortedCategories.forEach(([category, amount]) => {
+                const percentage = totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(0) : 0;
+                const div = document.createElement('div');
+                div.className = 'bg-app-secondary p-3 rounded-lg';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold">${category}</span>
+                        <span>$${amount.toFixed(2)} (${percentage}%)</span>
+                    </div>
+                    <div class="w-full bg-app-tertiary rounded-full h-2.5">
+                        <div class="accent-bg h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                categoriesEl.appendChild(div);
+            });
+        }
+
+        // --- MODAL HANDLING ---
+        const allModals = document.querySelectorAll('.fixed.bottom-0');
+        const backdrop = document.getElementById('modal-backdrop');
+
+        function openModal(modal) {
+            backdrop.classList.remove('hidden');
+            modal.classList.remove('translate-y-full');
+        }
+        function closeModal(modal) {
+            if (modal) {
+                modal.classList.add('translate-y-full');
+            }
+            const anyModalOpen = Array.from(allModals).some(m => !m.classList.contains('translate-y-full'));
+            if (!anyModalOpen) {
+                 backdrop.classList.add('hidden');
+            }
+        }
+        function closeAllModals() {
+            allModals.forEach(modal => modal.classList.add('translate-y-full'));
+            backdrop.classList.add('hidden');
+        }
+
+        // --- HELPER FUNCTIONS ---
+        function toLocalISOString(date) {
+            const offset = date.getTimezoneOffset();
+            const adjustedDate = new Date(date.getTime() - (offset*60*1000));
+            return adjustedDate.toISOString().slice(0,16);
+        }
+
+        // --- EVENT HANDLERS ---
+        function handleNavClick(event) {
+            const button = event.currentTarget;
+            const pageId = button.dataset.page;
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+            const title = button.querySelector('span').textContent;
+            document.getElementById('header-title').textContent = title;
+
+            if (pageId === 'reports-page') {
+                renderReports(currentReportDate);
+            }
+        }
+        
+        async function openTransactionModal(type) {
+            const title = type === 'expense' ? 'Log Expense' : 'Log Income';
+            document.getElementById('transaction-modal-title').textContent = title;
+            document.getElementById('transaction-type').value = type;
+            document.getElementById('transaction-form').reset();
+
+            const accounts = await dbGetAll('accounts');
+            const select = document.getElementById('transaction-account');
+            select.innerHTML = '';
+            if (accounts.length === 0) {
+                alert("Please create an account first in Settings!");
+                return;
+            }
+            accounts.forEach(acc => select.add(new Option(acc.name, acc.id)));
+            
+            const categorySelect = document.getElementById('transaction-category');
+            categorySelect.innerHTML = '';
+            CATEGORIES.forEach(cat => categorySelect.add(new Option(cat, cat)));
+            categorySelect.parentElement.style.display = type === 'expense' ? 'block' : 'none';
+
+            document.getElementById('transaction-datetime').value = toLocalISOString(new Date());
+
+            openModal(document.getElementById('transaction-modal'));
+        }
+
+        async function handleTransactionFormSubmit(event) {
+            event.preventDefault();
+            const type = document.getElementById('transaction-type').value;
+            const name = document.getElementById('transaction-name').value;
+            const amount = parseFloat(document.getElementById('transaction-amount').value);
+            const accountId = parseInt(document.getElementById('transaction-account').value);
+            const notes = document.getElementById('transaction-notes').value;
+            const category = document.getElementById('transaction-category').value;
+            const datetimeValue = document.getElementById('transaction-datetime').value;
+            const timestamp = new Date(datetimeValue).getTime();
+
+            if (!name || !(amount > 0) || !accountId || !timestamp) return;
+
+            await dbAdd('transactions', { type, name, amount, accountId, notes, category: type === 'expense' ? category : null, timestamp: timestamp });
+            
+            const account = await dbGet('accounts', accountId);
+            if (account) {
+                account.balance += (type === 'income' ? amount : -amount);
+                await dbUpdate('accounts', account);
+            }
+            
+            closeAllModals();
+            await renderAll();
+        }
+
+        async function handleAccountFormSubmit(event) {
+            event.preventDefault();
+            const id = document.getElementById('account-id').value;
+            const name = document.getElementById('account-name').value;
+            const newBalance = parseFloat(document.getElementById('account-balance').value);
+
+            if (!name || isNaN(newBalance)) return;
+            
+            if (id) { // Editing existing account
+                const accountId = parseInt(id);
+                const oldAccount = await dbGet('accounts', accountId);
+                const balanceDifference = newBalance - oldAccount.balance;
+                
+                if (balanceDifference !== 0) {
+                    const type = balanceDifference > 0 ? 'income' : 'expense';
+                    await dbAdd('transactions', {
+                        type,
+                        name: "Balance Adjustment",
+                        amount: Math.abs(balanceDifference),
+                        accountId,
+                        notes: `Manual balance update from $${oldAccount.balance.toFixed(2)} to $${newBalance.toFixed(2)}.`,
+                        category: "Adjustment",
+                        timestamp: new Date().getTime()
+                    });
+                }
+
+                await dbUpdate('accounts', { id: accountId, name, balance: newBalance });
+            } else { // Adding new account
+                await dbAdd('accounts', { name, balance: newBalance });
+            }
+            
+            closeAllModals();
+            await renderAll();
+        }
+
+        async function handleEditAccount(event) {
+            const id = parseInt(event.currentTarget.closest('div').querySelector('.edit-account-btn').dataset.id);
+            const account = await dbGet('accounts', id);
+            if (account) {
+                document.getElementById('account-modal-title').textContent = 'Edit Account';
+                document.getElementById('account-id').value = account.id;
+                document.getElementById('account-name').value = account.name;
+                document.getElementById('account-balance').value = account.balance.toFixed(2);
+                openModal(document.getElementById('account-modal'));
+            }
+        }
+
+        async function handleDeleteAccount(event) {
+            const id = parseInt(event.currentTarget.closest('div').querySelector('.delete-account-btn').dataset.id);
+            const accountToDelete = await dbGet('accounts', id);
+
+            if (confirm(`Are you sure you want to delete the "${accountToDelete.name}" account?\nThis will also delete ALL transactions associated with it and cannot be undone.`)) {
+                
+                const allTransactions = await dbGetAll('transactions');
+                const transactionsToDelete = allTransactions.filter(t => t.accountId === id);
+
+                const transaction = db.transaction(['transactions', 'accounts'], 'readwrite');
+                const transactionsStore = transaction.objectStore('transactions');
+                const accountsStore = transaction.objectStore('accounts');
+                
+                transactionsToDelete.forEach(t => transactionsStore.delete(t.id));
+                accountsStore.delete(id);
+
+                transaction.oncomplete = () => {
+                    console.log('Account and related transactions deleted.');
+                    renderAll();
+                };
+                 transaction.onerror = (e) => console.error("Error deleting account:", e.target.error);
+            }
+        }
+
+        async function handleAddTaskFormSubmit(event) {
+            event.preventDefault();
+            const input = document.getElementById('task-input');
+            const text = input.value.trim();
+            if (text) {
+                await dbAdd('tasks', { text: text, completed: false, createdAt: new Date().getTime() });
+                input.value = '';
+                await renderTasks();
+                lucide.createIcons();
+            }
+        }
+        async function handleTaskCheck(event) {
+            const checkbox = event.target;
+            const li = checkbox.closest('li');
+            const taskId = parseInt(li.dataset.taskId);
+            const task = await dbGet('tasks', taskId);
+            if (task) {
+                task.completed = checkbox.checked;
+                await dbUpdate('tasks', task);
+                await renderTasks(); // Re-render to move between lists
+                lucide.createIcons();
+            }
+        }
+        async function handleTaskDelete(event) {
+            const button = event.currentTarget;
+            const li = button.closest('li');
+            const taskId = parseInt(li.dataset.taskId);
+            if (confirm('Are you sure you want to delete this task?')) {
+                await dbDelete('tasks', taskId);
+                await renderTasks();
+                lucide.createIcons();
+            }
+        }
+        
+        async function openIOUModal(type) {
+            document.getElementById('iou-modal-title').textContent = type === 'lent' ? 'Log Money Lent' : 'Log Money Owed';
+            document.getElementById('iou-form').reset();
+            document.getElementById('iou-type').value = type;
+
+            const accountWrapper = document.getElementById('iou-account-wrapper');
+            if (type === 'lent') {
+                const accounts = await dbGetAll('accounts');
+                const select = document.getElementById('iou-account');
+                select.innerHTML = '';
+                if (accounts.length === 0) {
+                    alert("Please create an account first in Settings!");
+                    return;
+                }
+                accounts.forEach(acc => select.add(new Option(acc.name, acc.id)));
+                accountWrapper.style.display = 'block';
+            } else {
+                accountWrapper.style.display = 'none';
+            }
+
+            openModal(document.getElementById('iou-modal'));
+        }
+
+        async function handleIOUFormSubmit(event) {
+            event.preventDefault();
+            const type = document.getElementById('iou-type').value;
+            const person = document.getElementById('iou-person').value;
+            const amount = parseFloat(document.getElementById('iou-amount').value);
+            const notes = document.getElementById('iou-notes').value;
+            const accountId = parseInt(document.getElementById('iou-account').value);
+
+            if (!person || !amount > 0) return;
+            
+            // If money is lent, create an expense transaction
+            if (type === 'lent') {
+                if (!accountId) {
+                    alert("Please select an account to lend from.");
+                    return;
+                }
+                await dbAdd('transactions', { 
+                    type: 'expense', 
+                    name: `Loan to ${person}`, 
+                    amount, 
+                    accountId, 
+                    notes, 
+                    category: "IOU", 
+                    timestamp: new Date().getTime() 
+                });
+            
+                const account = await dbGet('accounts', accountId);
+                if (account) {
+                    account.balance -= amount;
+                    await dbUpdate('accounts', account);
+                }
+            }
+
+            await dbAdd('ious', { type, person, amount, notes, settled: false, timestamp: new Date().getTime() });
+            closeAllModals();
+            await renderAll();
+        }
+
+        async function handleSettleIOU(event) {
+            const iouId = parseInt(event.target.dataset.id);
+            const iou = await dbGet('ious', iouId);
+            if (!iou) return;
+
+            const accounts = await dbGetAll('accounts');
+            if (accounts.length === 0) {
+                alert('You need an account to settle an IOU.');
+                return;
+            }
+            
+            const accountOptions = accounts.map(a => `${a.id}: ${a.name}`).join('\n');
+            const accountIdStr = prompt(`Which account to use for settlement?\n\nEnter the number for the account:\n${accountOptions}`, accounts[0].id);
+            const accountId = parseInt(accountIdStr);
+
+            const selectedAccount = accounts.find(a => a.id === accountId);
+            if (!selectedAccount) {
+                alert('Invalid account selected.');
+                return;
+            }
+
+            const transactionType = iou.type === 'lent' ? 'income' : 'expense';
+            const transactionName = iou.type === 'lent' ? `Repayment from ${iou.person}` : `Payment to ${iou.person}`;
+
+            await dbAdd('transactions', {
+                type: transactionType,
+                name: transactionName,
+                amount: iou.amount,
+                accountId,
+                notes: `Settlement of IOU.`,
+                category: "IOU",
+                timestamp: new Date().getTime()
+            });
+
+            selectedAccount.balance += (transactionType === 'income' ? iou.amount : -iou.amount);
+            await dbUpdate('accounts', selectedAccount);
+            
+            iou.settled = true;
+            await dbUpdate('ious', iou);
+
+            await renderAll();
+        }
+        
+        async function handleExportData() {
+            console.log('Exporting data...');
+            try {
+                const accounts = await dbGetAll('accounts');
+                const transactions = await dbGetAll('transactions');
+                const tasks = await dbGetAll('tasks');
+                const ious = await dbGetAll('ious');
+                const settings = await dbGetAll('settings');
+
+                const dataToExport = {
+                    exportDate: new Date().toISOString(),
+                    data: {
+                        accounts,
+                        transactions,
+                        tasks,
+                        ious,
+                        settings
+                    }
+                };
+
+                const jsonString = JSON.stringify(dataToExport, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `pocket-pal-backup-${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('Data exported successfully!');
+
+            } catch (error) {
+                console.error('Failed to export data:', error);
+                alert('An error occurred while exporting your data.');
+            }
+        }
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const swContent = `
+                    const CACHE_NAME = 'pocket-pal-cache-v6';
+                    const urlsToCache = [
+                        '/',
+                        'index.html' // Cache the main HTML file
+                    ];
+
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME).then(cache => {
+                                console.log('Opened cache');
+                                return cache.addAll(urlsToCache);
+                            })
+                        );
+                    });
+
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request).then(response => {
+                                // Cache hit - return response
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+                const blob = new Blob([swContent], {type: 'application/javascript'});
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            }
+        }
+
+        // --- INITIALIZATION ---
+        function setupEventListeners() {
+            document.querySelectorAll('.nav-button').forEach(btn => btn.addEventListener('click', handleNavClick));
+            
+            document.getElementById('add-expense-btn').addEventListener('click', () => openTransactionModal('expense'));
+            document.getElementById('add-income-btn').addEventListener('click', () => openTransactionModal('income'));
+
+            document.querySelectorAll('.cancel-btn').forEach(btn => btn.addEventListener('click', () => closeAllModals()));
+            backdrop.addEventListener('click', closeAllModals);
+
+            document.getElementById('transaction-form').addEventListener('submit', handleTransactionFormSubmit);
+            document.getElementById('account-form').addEventListener('submit', handleAccountFormSubmit);
+            document.getElementById('add-task-form').addEventListener('submit', handleAddTaskFormSubmit);
+            document.getElementById('iou-form').addEventListener('submit', handleIOUFormSubmit);
+
+            document.getElementById('add-account-btn').addEventListener('click', () => {
+                 document.getElementById('account-modal-title').textContent = 'Add Account';
+                 document.getElementById('account-form').reset();
+                 openModal(document.getElementById('account-modal'));
+            });
+            
+            document.getElementById('export-data-btn').addEventListener('click', handleExportData);
+
+            document.getElementById('add-lent-btn').addEventListener('click', () => openIOUModal('lent'));
+            document.getElementById('add-owed-btn').addEventListener('click', () => openIOUModal('owed'));
+
+            document.getElementById('prev-month-btn').addEventListener('click', () => {
+                currentReportDate.setMonth(currentReportDate.getMonth() - 1);
+                renderReports(currentReportDate);
+            });
+            document.getElementById('next-month-btn').addEventListener('click', () => {
+                currentReportDate.setMonth(currentReportDate.getMonth() + 1);
+                renderReports(currentReportDate);
+            });
+        }
+        
+        // --- APP START ---
+        window.onload = async () => {
+            await setupDatabase();
+            renderThemeSelector();
+            await loadTheme();
+            
+            const accounts = await dbGetAll('accounts');
+            if (accounts.length === 0) {
+                await dbAdd('accounts', { name: 'Cash', balance: 50 });
+                await dbAdd('accounts', { name: 'Bank', balance: 500 });
+            }
+
+            setupEventListeners();
+            await renderAll();
+            lucide.createIcons();
+            registerServiceWorker();
+        };
+    </script>
+</body>
+</html>
+
