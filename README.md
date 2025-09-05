@@ -54,5 +54,7 @@ For testing on a laptop or desktop:
 ## 📂 File Structure
 
 The entire application is self-contained in `daa11.html`. This was a deliberate design choice to make the project maximally portable and easy to manage.
+'''txt
 /
 └── index.html
+'''
