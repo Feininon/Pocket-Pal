@@ -1,5 +1,5 @@
 # Pocket Pal - Your Offline-First Finance & Task Manager
-this was written by AI. the code and the readme file, i just had an idea and hard to explain it to AI.
+this was written by AI. the code and the readme file, i just had an idea and was having hard time to explain it to AI and getting the code.
 
 **A 100% private, browser-based personal assistant to manage your finances, tasks, and daily life without ever needing an internet connection.**
 
