@@ -35,7 +35,7 @@ The beauty of Pocket Pal is its simplicity. You can run it locally on your deskt
 
 To get the full PWA experience with offline capabilities, you need to host the `daa11.html` file on a web server. The easiest way is with a free service like [tiiny.host](https://tiiny.host) or [Netlify Drop](https://app.netlify.com/drop).
 
-1. **Go to a hosting service:** For example, [tiiny.host](https://tiiny.host). [use this if still available : https://peach-ashil-23.tiiny.site/]
+1. **Go to a hosting service:** For example, [tiiny.host](https://tiiny.host). [if lazy use this if still available : https://peach-ashil-23.tiiny.site/]
 2. **Drag & Drop:** Upload the `daa11.html` file.
 3. **Launch:** Get your live `https://` URL.
 
